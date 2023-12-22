@@ -1,2 +1,2 @@
-Notes_dir: 
-pdfs_dir:
+pdfs_dir: "testdir/"
+citation_notes_dir: "test_notes/"

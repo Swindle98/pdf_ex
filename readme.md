@@ -12,3 +12,12 @@ As such the recommened setup is as follows:
   - citations
 - Pdf annoator (Highlights)
 - Citation manager (Jabref)
+
+## Workflow rules
+
+Comments always have accompanied highlighted text.
+
+## roadmap
+
+- [ ] Non-highlight comments.
+- [ ] More forgiving colour recognition.
