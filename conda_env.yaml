@@ -1,0 +1,41 @@
+name: pdf_extractor
+channels:
+  - conda-forge
+dependencies:
+  - bzip2=1.0.8=h93a5062_5
+  - ca-certificates=2023.11.17=hf0a4a13_0
+  - dataclasses=0.8=pyhc8e2a94_3
+  - libblas=3.9.0=20_osxarm64_openblas
+  - libcblas=3.9.0=20_osxarm64_openblas
+  - libcxx=16.0.6=h4653b0c_0
+  - libexpat=2.5.0=hb7217d7_1
+  - libffi=3.4.2=h3422bc3_5
+  - libgfortran=5.0.0=13_2_0_hd922786_1
+  - libgfortran5=13.2.0=hf226fd6_1
+  - liblapack=3.9.0=20_osxarm64_openblas
+  - libopenblas=0.3.25=openmp_h6c19121_0
+  - libsqlite=3.44.2=h091b4b1_0
+  - libzlib=1.2.13=h53f4e23_5
+  - llvm-openmp=17.0.6=hcd81f8e_0
+  - ncurses=6.4=h463b476_2
+  - numpy=1.26.3=py312h8442bc7_0
+  - openssl=3.2.0=h0d3ecfb_1
+  - pip=23.3.2=pyhd8ed1ab_0
+  - pypdf=3.17.3=pyhd8ed1ab_0
+  - python=3.12.0=h47c9636_0_cpython
+  - python_abi=3.12=4_cp312
+  - pyyaml=6.0.1=py312h02f2b3b_1
+  - readline=8.2=h92ec313_1
+  - scipy=1.11.4=py312h510ce61_0
+  - setuptools=68.2.2=pyhd8ed1ab_0
+  - tk=8.6.13=h5083fa2_1
+  - typing_extensions=4.9.0=pyha770c72_0
+  - tzdata=2023c=h71feb2d_0
+  - webcolors=1.13=pyhd8ed1ab_0
+  - wheel=0.42.0=pyhd8ed1ab_0
+  - xz=5.2.6=h57fd34a_0
+  - yaml=0.2.5=h3422bc3_2
+  - pip:
+      - pymupdf==1.23.8
+      - pymupdfb==1.23.7
+prefix: /Users/swindle/miniforge3/envs/pdf_extractor
