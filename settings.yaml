@@ -1,3 +1,3 @@
 pdfs_dir: testdir/
 citation_notes_dir: test_notes/
-placeholder: ^^PDF_NOTES^^ # The the string you want to replace with the notes. Default is ^^PDF_NOTES^^
+tag: ^^PDF_NOTES^^ # The the string you want to replace with the notes. Default is ^^PDF_NOTES^^

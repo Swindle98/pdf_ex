@@ -20,8 +20,8 @@ def load_settings():
         global citation_notes_dir
         citation_notes_dir = settings['citation_notes_dir']
 
-        global placeholder
-        placeholder = settings['placeholder']
+        global tag
+        tag = settings['tag']
     except:
         print("Error reading settings.yaml file")
         exit()
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         if notes:
             print(f"Found notes for {key}")
             md_text = annotate_to_md(pdf)
-            replace_string_in_file(notes, placeholder, md_text)
+            replace_string_in_file(notes, tag, md_text)
         else:
             print(f"No notes found for {key}")
 
