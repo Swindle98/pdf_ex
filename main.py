@@ -1,42 +1,73 @@
 import fitz
 import yaml
+import os
+from scipy.spatial import KDTree
+
 
 def load_settings():
     '''
-    Loads the settings from the settings.yaml file.
+    Loads the settings from the settings.yaml file as global variables.
     '''
-    with open("settings.yaml", "r") as yamlfile:
-        settings = yaml.load(yamlfile, Loader=yaml.FullLoader)
-        print("Read successful")
-        global pdf_dir
-        pdf_dir = settings["pdf_dir"]
+    try:
+        with open("settings.yaml", "r") as yamlfile:
+            settings = yaml.load(yamlfile, Loader=yaml.FullLoader)
+            print("Read successful", settings)
+            print(settings['pdfs_dir'])
+
+        global pdfs_dir
+        pdfs_dir = settings['pdfs_dir']
+
         global citation_notes_dir
-        citation_notes_dir = settings["citation_notes_dir"]
+        citation_notes_dir = settings['citation_notes_dir']
 
-
-def colour_name(colour):
+        global placeholder
+        placeholder = settings['placeholder']
+    except:
+        print("Error reading settings.yaml file")
+        exit()
+        
+def colour_name(rgb_tuple):
     '''
-    Converts a colour from RGB to a name. Based on the default colours in the Highlighs application, 
-    other applications will just return colour values.
+    Converts an RGB tuple to a colour name.
     '''
-    if colour == (1.0, 0.75, 0.5):
-        return "orange"
-    if colour == (1.0, 0.5, 0.5):
-        return "red"
-    if colour == (1.0, 1.0, 0.5):
-        return "yellow"
-    if colour == (1.0,0.5,1.0):
-        return "pink"
-    if colour == (0.75, 0.5, 0.75):
-        return "purple"
-    if colour == (0.5, 1.0, 0.5):
-        return "green"
-    if colour == (0.5, 1.0, 1.0):
-        return "blue"   
-    else:
-        return colour 
+    colour_db = {
+        (1, 0.75, 0.5): "Orange",
+        (1, 0.5, 0.5): "Red",
+        (1, 1, 0.5): "Yellow",
+        (1, 0.5, 1): "Pink",
+        (0.75, 0.5, 0.75): "Purple",
+        (0.5, 1, 0.5): "Green",
+        (128, 1, 1): "Cyan",
+        }
+    
+    
+    names = []
+    rgb_values = []    
+    for rgb, color in colour_db.items():
+        names.append(color)
+        rgb_values.append(rgb)
+    
+    kdt_db = KDTree(rgb_values)
+    distance, index = kdt_db.query(rgb_tuple)
+    print(names[index])
+    return names[index]
 
-def highlight_info(annot, debug=False):
+"""def colour_name(colour):
+    '''
+    Converts a colour from RGB to a name. If the colour is not found, returns the RGB value.
+    '''
+    try:
+        rgb_colour = (int(col * 256) for col in colour)
+        print(colour)
+        print(tuple(rgb_colour))
+        colour_name = webcolors.IntegerRGB(rgb_colour)
+        print(colour_name)
+        #return colour_name
+    except:
+        print("Colour not found")
+        return colour"""
+
+def highlight_info(page, annot, debug=False):
         '''
         Returns the highlighted text, colour, comment and author of a highlight annotation.
         '''
@@ -67,8 +98,6 @@ highlighted_text: {highlighted_text}
         return [highlighted_text, a_type, colour, comment, author]
 
 
-
-
 def create_md_text(annotations):
     '''
     Adds annotations to a pdf.
@@ -88,17 +117,68 @@ def create_md_text(annotations):
             full_md += md_text
     return full_md
 
-if __name__ == "__main__":
+def annotate_to_md(pdf):
 
-    doc = fitz.open(pdf_dir)
-
+    doc = fitz.open(pdf)
     annotations = []
     for page in doc:
         for annot in page.annots():
-            annotation =  highlight_info(annot)
+            annotation =  highlight_info(page, annot)
             if annotation:
                 annotation.append(page.number)
                 annotations.append(annotation)
+    return create_md_text(annotations)
 
-    print(create_md_text(annotations))
+def md_search(citekey):
+    '''
+    Searches the citation_notes_dir for the citekey.md file and returns the path.
+    '''
+    for file in os.listdir(citation_notes_dir):
+        if file == f"{citekey}.md":
+            return os.path.join(citation_notes_dir, file)
+    return None
 
+def replace_string_in_file(file_path, old_string, new_string):
+    '''
+    Replaces a string in a file.
+    '''
+    # Open the file in read mode
+    with open(file_path, 'r') as file:
+        file_data = file.read()
+
+    # Replace the target string
+    file_data = file_data.replace(old_string, new_string)
+
+    # Write the file out again
+    with open(file_path, 'w') as file:
+        file.write(file_data)
+
+if __name__ == "__main__":
+    load_settings()
+    pdfs_dir_ls = os.listdir(pdfs_dir)
+    print(pdfs_dir_ls)
+    citekey_dict = {}
+    for pdf in pdfs_dir_ls:
+        if pdf[-4:] == ".pdf":
+            
+            citekey = pdf.split(" - ")[0]
+            citekey_dict[citekey] = pdf
+
+    print(citekey_dict)
+
+    for key in citekey_dict:
+        pdf = pdfs_dir + citekey_dict[key]
+        notes = md_search(key)
+        print(f"""
+              PDF: {pdf}
+              Notes: {notes}
+              """)
+        if notes:
+            print(f"Found notes for {key}")
+            md_text = annotate_to_md(pdf)
+            replace_string_in_file(notes, placeholder, md_text)
+        else:
+            print(f"No notes found for {key}")
+
+        
+        
